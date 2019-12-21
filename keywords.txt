@@ -1,0 +1,23 @@
+#######################################
+# Syntax Coloring Map For SensorLamp
+#######################################
+
+#######################################
+# Class (KEYWORD1)
+#######################################
+
+SensorLamp	KEYWORD1
+~SensorLamp	KEYWORD1
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+
+init	KEYWORD2
+update	KEYWORD2
+handDetected	KEYWORD2
+getStatus	KEYWORD2
+
+#######################################
+# Constants (LITERAL1)
+#######################################
