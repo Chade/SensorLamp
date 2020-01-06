@@ -1,0 +1,20 @@
+{
+    "name": "SensorLamp",
+    "description": "Code to controll a hand gesture controlled lamp.",
+    "keywords": "Sensor Lamp Gesture COntroller",
+    "authors": [
+        {
+            "name": "Stefan Leibold"
+        },
+        {
+            "name": "Stefan Leibold",
+            "maintainer": true
+        }
+    ],
+    "repository": {
+        "type": "git",
+         "url": "https://github.com/Chade/SensorLamp"
+    },
+    "version": "1.0",
+    "frameworks": "Arduino",
+}
