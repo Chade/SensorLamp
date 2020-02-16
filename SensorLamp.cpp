@@ -1,9 +1,22 @@
 #include "SensorLamp.h"
 #include <Arduino.h>
 
-SensorLamp::SensorLamp(uint8_t sensorPin, uint8_t ledPin) :
+SensorLamp::SensorLamp(uint8_t type, uint8_t sensorPin, uint8_t ledPin) :
         filter(FILTERSIZE), sensor_pin(sensorPin), led_pin(ledPin)
 {
+    if (type == Sharp_200_1500)
+    {
+        in_out_size = 14;
+        in  = new (int16_t[14]) {  90,   97,  105,  113,  124,  134, 147, 164, 185, 218, 255, 317, 414, 525};
+        out = new (int16_t[14]) {1500, 1400, 1300, 1200, 1100, 1000, 900, 800, 700, 600, 500, 400, 300, 200};
+    }
+    else if (type == Sharp_40_300)
+    {
+        in_out_size = 12;
+        in  = new (int16_t[12]) { 81,  90, 102, 115, 136, 157, 186, 231, 296, 408, 605, 650};
+        out = new (int16_t[12]) {300, 275, 250, 225, 200, 175, 150, 125, 100,  75,  50,  40};
+    }
+
     pinMode(sensor_pin, INPUT);
     pinMode(led_pin, OUTPUT);
     analogWrite(led_pin, 0);
@@ -31,7 +44,7 @@ void SensorLamp::init(const uint16_t &senseMin, const uint16_t &senseMax, const 
     int16_t adc_input = filter.get();
 
     // Convert analog value to distance in mm
-    uint16_t distance = MedianFilter::multiMap(adc_input, in, out, 14);
+    uint16_t distance = MedianFilter::multiMap(adc_input, in, out, in_out_size);
 
     // Adjust max sense value
     if (distance > sense_max)
@@ -321,7 +334,7 @@ uint16_t SensorLamp::measure()
     uint16_t adc_input = filter.get();
 
     // Convert analog value to distance in mm
-    return MedianFilter::multiMap(adc_input, in, out, 14);
+    return MedianFilter::multiMap(adc_input, in, out, in_out_size);
 }
 
 uint16_t SensorLamp::burstMeasure()
@@ -347,7 +360,7 @@ uint16_t SensorLamp::burstMeasure()
     uint16_t adc_input = filter.get();
 
     // Convert value to distance in mm
-    return MedianFilter::multiMap(adc_input, in, out, 14);
+    return MedianFilter::multiMap(adc_input, in, out, in_out_size);
 }
 
 void SensorLamp::adjustBrightness(const uint8_t &level, const bool fade, const uint16_t &fadeTime)

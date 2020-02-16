@@ -4,6 +4,10 @@
 #include <Arduino.h>
 #include <MedianFilter.h>
 
+#define Sharp_200_1500           1
+#define Sharp_100_800            2
+#define Sharp_40_300             3
+
 #define FILTERSIZE              15    // Sample size for median filter
 
 #define BURST_DELAY_MICROS    1000
@@ -31,13 +35,15 @@
 class SensorLamp
 {
   public:
-    SensorLamp(uint8_t sensorPin = A0, uint8_t ledPin = 13);
+    SensorLamp(uint8_t type = Sharp_200_1500, uint8_t sensorPin = A0, uint8_t ledPin = 13);
     ~SensorLamp();
 
     void init(const uint16_t &senseMin = 200, const uint16_t &senseMax = 1500, const uint16_t &trackDistance = 300);
     void update(const uint32_t &cycleTime = 0, const uint32_t &readoutTime = (BURST_READINGS * BURST_DELAY_MICROS / 1000), const bool burst = true);
 
     uint8_t handDetected(const uint32_t &readoutTime = (BURST_READINGS * BURST_DELAY_MICROS / 1000), const bool burst = true);
+
+    void setConverterArray(const int16_t* in, const int16_t* out);
 
     void getStatus(uint16_t &analog_in, uint8_t &pwm_out);
     uint16_t getDistance();
@@ -48,13 +54,15 @@ class SensorLamp
     const uint8_t sensor_pin;
     const uint8_t led_pin;
 
+    uint8_t in_out_size = 0;
+
     // in[] holds the measured analogRead() values for defined distances
     // Note: The in array should have increasing values
-    const int16_t in[14]  = {90, 97, 105, 113, 124, 134, 147, 164, 185, 218, 255, 317, 414, 525};
+    int16_t* in = nullptr;
 
     // out[] holds the corresponding distances in mm
     // Note: The out array should have decreasing values
-    const int16_t out[14] = {1500, 1400, 1300, 1200, 1100, 1000, 900, 800, 700, 600, 500, 400, 300, 200};
+    int16_t* out = nullptr;
 
     bool lamp_lighted = false;
     bool hand_tracking = false;
